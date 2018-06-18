@@ -209,10 +209,17 @@ def chat():
         # Decode from standard input.
         max_length = config.BUCKETS[-1][0]
         print('Welcome to TensorBro. Say something. Enter to exit. Max length is', max_length)
+        # store a line history for 3 lines
+        line_history = ['', '', ''] 
         while True:
             line = _get_user_input()
             if len(line) > 0 and line[-1] == '\n':
                 line = line[:-1]
+                # update the line_history
+                line_history.append(line)
+                line_history.pop(0)
+                # create line from the line history
+                line = ''.join(line_history)
             if line == '':
                 break
             output_file.write('HUMAN ++++ ' + line + '\n')

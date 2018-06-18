@@ -195,10 +195,27 @@ def process_data():
     token2id('test', 'dec')
 
 def load_data(enc_filename, dec_filename, max_training_size=None):
+    data_buckets = [[] for _ in config.BUCKETS]
+    # load up to 3 line encodings 
+    for i in range(3):
+        load_num_lines_data(data_buckets, i, enc_filename, dec_filename, max_training_size)
+    return data_buckets
+
+def load_num_lines_data(data_buckets, num_lines, enc_filename, dec_filename, max_training_size=None):
     encode_file = open(os.path.join(config.PROCESSED_PATH, enc_filename), 'r')
     decode_file = open(os.path.join(config.PROCESSED_PATH, dec_filename), 'r')
-    encode, decode = encode_file.readline(), decode_file.readline()
-    data_buckets = [[] for _ in config.BUCKETS]
+
+    # append num_lines together
+    encode_list = []
+    decode_list = []
+    for x in num_lines:
+        encode_line, decode_line = encode_file.readline(), decode_file.readline()
+        encode_list.append(encode_line) #includes the \n character
+        decode_list.append(decode_line)
+    # map from num_lines of encodings to last decoder
+    encode = ''.join(encode_list)
+    decode = decode_list[-1]
+
     i = 0
     while encode and decode:
         if (i + 1) % 10000 == 0:
@@ -209,9 +226,14 @@ def load_data(enc_filename, dec_filename, max_training_size=None):
             if len(encode_ids) <= encode_max_size and len(decode_ids) <= decode_max_size:
                 data_buckets[bucket_id].append([encode_ids, decode_ids])
                 break
-        encode, decode = encode_file.readline(), decode_file.readline()
+        # read num_lines in
+        for x in num_lines:
+            encode_line, decode_line = encode_file.readline(), decode_file.readline()
+            encode_list.append(encode_line)
+            decode_list.append(decode_line)
+        encode = ''.join(encode_list)
+        decode = ''.join(encode_list) 
         i += 1
-    return data_buckets
 
 def _pad_input(input_, size):
     return input_ + [config.PAD_ID] * (size - len(input_))
