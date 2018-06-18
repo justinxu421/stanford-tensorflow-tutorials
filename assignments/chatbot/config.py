@@ -16,12 +16,17 @@ See README.md for instruction on how to run the starter code.
 """
 
 # parameters for processing the dataset
-DATA_PATH = 'data/cornell movie-dialogs corpus'
-CONVO_FILE = 'movie_conversations.txt'
-LINE_FILE = 'movie_lines.txt'
-OUTPUT_FILE = 'output_convo.txt'
-PROCESSED_PATH = 'processed'
-CPT_PATH = 'checkpoints'
+# DATA_PATH = 'data/cornell movie-dialogs corpus'
+# CONVO_FILE = 'movie_conversations.txt'
+# LINE_FILE = 'movie_lines.txt'
+# OUTPUT_FILE = 'output_convo.txt'
+# PROCESSED_PATH = 'processed'
+# CPT_PATH = 'checkpoints'
+
+# overfit to a smaller set of conversations
+OUTPUT_FILE = 'output_convo_abridged.txt'
+PROCESSED_PATH = 'processed_abridged'
+CPT_PATH = 'checkpoints_abridged'
 
 THRESHOLD = 2
 
@@ -48,5 +53,9 @@ LR = 0.5
 MAX_GRAD_NORM = 5.0
 
 NUM_SAMPLES = 512
-ENC_VOCAB = 24429
-DEC_VOCAB = 24648
+ENC_VOCAB = 24403
+DEC_VOCAB = 24594
+ENC_VOCAB = 6529
+DEC_VOCAB = 6486
+ENC_VOCAB = 1289
+DEC_VOCAB = 1286
