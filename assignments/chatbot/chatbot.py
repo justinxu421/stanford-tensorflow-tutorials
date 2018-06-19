@@ -210,6 +210,7 @@ def chat():
         max_length = config.BUCKETS[-1][0]
         print('Welcome to TensorBro. Say something. Enter to exit. Max length is', max_length)
         # store a line history for 3 lines
+        conversation_history = []
         line_history = ['', '', ''] 
         while True:
             line = _get_user_input()
@@ -240,6 +241,7 @@ def chat():
                                            decoder_masks, bucket_id, True)
             response = _construct_response(output_logits, inv_dec_vocab)
             print(response)
+            conversation_history.append((line, response))
             output_file.write('BOT ++++ ' + response + '\n')
         output_file.write('=============================================\n')
         output_file.close()

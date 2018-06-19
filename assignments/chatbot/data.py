@@ -196,9 +196,8 @@ def process_data():
 
 def load_data(enc_filename, dec_filename, max_training_size=None):
     data_buckets = [[] for _ in config.BUCKETS]
-    # load up to 3 line encodings 
-    for i in range(3):
-        load_num_lines_data(data_buckets, i, enc_filename, dec_filename, max_training_size)
+    # load 3 line encodings 
+    load_num_lines_data(data_buckets, 3, enc_filename, dec_filename, max_training_size)
     return data_buckets
 
 def load_num_lines_data(data_buckets, num_lines, enc_filename, dec_filename, max_training_size=None):
@@ -208,13 +207,11 @@ def load_num_lines_data(data_buckets, num_lines, enc_filename, dec_filename, max
     # append num_lines together
     encode_list = []
     decode_list = []
-    for x in num_lines:
-        encode_line, decode_line = encode_file.readline(), decode_file.readline()
+    for x in range(num_lines):
+        encode_line, decode = encode_file.readline(), decode_file.readline()
         encode_list.append(encode_line) #includes the \n character
-        decode_list.append(decode_line)
     # map from num_lines of encodings to last decoder
     encode = ''.join(encode_list)
-    decode = decode_list[-1]
 
     i = 0
     while encode and decode:
@@ -226,14 +223,15 @@ def load_num_lines_data(data_buckets, num_lines, enc_filename, dec_filename, max
             if len(encode_ids) <= encode_max_size and len(decode_ids) <= decode_max_size:
                 data_buckets[bucket_id].append([encode_ids, decode_ids])
                 break
-        # read num_lines in
-        for x in num_lines:
-            encode_line, decode_line = encode_file.readline(), decode_file.readline()
-            encode_list.append(encode_line)
-            decode_list.append(decode_line)
+        # update the encode_list
+        encode_line, decode = encode_file.readline(), decode_file.readline()
+        encode_list.append(encode_line)
+        encode_list.pop(0)
         encode = ''.join(encode_list)
-        decode = ''.join(encode_list) 
         i += 1
+
+    encode_file.close()
+    decode_file.close()
 
 def _pad_input(input_, size):
     return input_ + [config.PAD_ID] * (size - len(input_))
